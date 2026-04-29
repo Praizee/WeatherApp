@@ -9,6 +9,7 @@ import {
   makeCityId,
 } from "@/src/hooks/useSavedCities";
 import SavedCityRow from "@/src/components/SavedCityRow";
+import SkeletonBlock from "@/src/components/SkeletonBlock";
 
 export default function CitiesScreen() {
   const insets = useSafeAreaInsets();
@@ -27,6 +28,15 @@ export default function CitiesScreen() {
           <Ionicons name="add" size={26} color="#60A5FA" />
         </Pressable>
       </View>
+
+      {/* Loading skeleton */}
+      {isLoading && (
+        <View style={tw`px-4 gap-3`}>
+          {[...Array(4)].map((_, i) => (
+            <SkeletonBlock key={i} height={72} borderRadius={16} />
+          ))}
+        </View>
+      )}
 
       {/* Empty state */}
       {!isLoading && (!cities || cities.length === 0) && (

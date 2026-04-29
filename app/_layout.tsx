@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { View } from "react-native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -7,6 +8,7 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 import { queryClient } from "@/src/query/client";
 import { persistOptions } from "@/src/query/persister";
 import { bootstrapNetInfo } from "@/src/lib/netStatus";
+import OfflineBanner from "@/src/components/OfflineBanner";
 
 export default function RootLayout() {
   useEffect(() => {
@@ -20,14 +22,17 @@ export default function RootLayout() {
           client={queryClient}
           persistOptions={persistOptions}
         >
-          <StatusBar style="light" />
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: "#0B1220" },
-              animation: "slide_from_right",
-            }}
-          />
+          <View style={{ flex: 1 }}>
+            <StatusBar style="light" />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: "#0B1220" },
+                animation: "slide_from_right",
+              }}
+            />
+            <OfflineBanner />
+          </View>
         </PersistQueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

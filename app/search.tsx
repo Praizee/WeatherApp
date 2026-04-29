@@ -94,21 +94,36 @@ export default function SearchScreen() {
           </View>
         </View>
 
-        {/* Results */}
+        {/* Results feedback */}
         {isFetching && (
           <ActivityIndicator color="#4B6FA5" style={tw`mt-6`} />
         )}
 
         {!isFetching && error && (
-          <Text style={tw`text-slate-400 text-sm text-center mt-8 px-8`}>
-            Something went wrong. Check your connection and try again.
-          </Text>
+          <View style={tw`items-center mt-10 px-8`}>
+            <Ionicons name="wifi-outline" size={36} color="#1E2D45" style={tw`mb-3`} />
+            <Text style={tw`text-slate-400 text-sm text-center`}>
+              Couldn't search — check your internet connection and try again.
+            </Text>
+          </View>
         )}
 
-        {!isFetching && results && results.length === 0 && debouncedQuery.length >= 2 && (
-          <Text style={tw`text-slate-400 text-sm text-center mt-8 px-8`}>
-            No results for "{debouncedQuery}". Try a different spelling.
-          </Text>
+        {!isFetching && !error && debouncedQuery.length >= 2 && results && results.length === 0 && (
+          <View style={tw`items-center mt-10 px-8`}>
+            <Ionicons name="search-outline" size={36} color="#1E2D45" style={tw`mb-3`} />
+            <Text style={tw`text-slate-400 text-sm text-center`}>
+              No cities found for "{debouncedQuery}". Try a different spelling or check the city name.
+            </Text>
+          </View>
+        )}
+
+        {debouncedQuery.length === 0 && (
+          <View style={tw`items-center mt-10 px-8`}>
+            <Ionicons name="earth-outline" size={36} color="#1E2D45" style={tw`mb-3`} />
+            <Text style={tw`text-slate-400 text-sm text-center`}>
+              Type at least 2 characters to search for a city.
+            </Text>
+          </View>
         )}
 
         <FlatList
