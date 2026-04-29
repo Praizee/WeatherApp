@@ -18,6 +18,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
   },
   android: {
+    package: "com.weatherapp.hng",
     adaptiveIcon: {
       backgroundColor: "#0B1220",
       foregroundImage: "./assets/images/android-icon-foreground.png",
@@ -58,6 +59,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   extra: {
     owmKey: process.env.EXPO_PUBLIC_OWM_KEY ?? "",
+    eas: {
+      projectId: "76fedb94-f40c-4524-9e5c-d47409e36d44",
+    },
   },
 });
 
