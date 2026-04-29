@@ -1,8 +1,8 @@
-import { ExpoConfig, ConfigContext } from "expo/config";
+import { ConfigContext, ExpoConfig } from "expo/config";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: "WeatherApp",
+  name: "Weather App",
   slug: "WeatherApp",
   version: "1.0.0",
   orientation: "portrait",
@@ -60,3 +60,4 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     owmKey: process.env.EXPO_PUBLIC_OWM_KEY ?? "",
   },
 });
+
