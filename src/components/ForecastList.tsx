@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { View, Text, Pressable } from "react-native";
+import { MotiView } from "moti";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -33,13 +34,19 @@ export default function ForecastList({ daily, timezoneOffset }: Props) {
         8-DAY FORECAST
       </Text>
       {daily.slice(1).map((day, i) => (
-        <ForecastRow
+        <MotiView
           key={day.dt}
-          day={day}
-          timezoneOffset={timezoneOffset}
-          isExpanded={expandedIndex === i}
-          onToggle={() => handleToggle(i)}
-        />
+          from={{ opacity: 0, translateX: -12 }}
+          animate={{ opacity: 1, translateX: 0 }}
+          transition={{ type: "timing", duration: 380, delay: i * 55 }}
+        >
+          <ForecastRow
+            day={day}
+            timezoneOffset={timezoneOffset}
+            isExpanded={expandedIndex === i}
+            onToggle={() => handleToggle(i)}
+          />
+        </MotiView>
       ))}
     </View>
   );

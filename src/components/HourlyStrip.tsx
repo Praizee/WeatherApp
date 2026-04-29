@@ -1,4 +1,5 @@
 import { FlatList, View, Text } from "react-native";
+import { MotiView } from "moti";
 import tw from "@/src/lib/tw";
 import { formatTime, formatTemp } from "@/src/lib/weatherTheme";
 import { getWeatherKey, WEATHER_EMOJI } from "@/src/lib/iconMap";
@@ -26,7 +27,13 @@ export default function HourlyStrip({ hours, timezoneOffset }: Props) {
         snapToInterval={76}
         decelerationRate="fast"
         renderItem={({ item, index }) => (
-          <HourCard item={item} timezoneOffset={timezoneOffset} isNow={index === 0} />
+          <MotiView
+            from={{ opacity: 0, translateY: 16 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ type: "timing", duration: 350, delay: index * 40 }}
+          >
+            <HourCard item={item} timezoneOffset={timezoneOffset} isNow={index === 0} />
+          </MotiView>
         )}
       />
     </View>

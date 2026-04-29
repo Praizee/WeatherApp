@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { View, Text, Pressable } from "react-native";
 import Swipeable from "react-native-gesture-handler/Swipeable";
+import { MotiView } from "moti";
 import { Ionicons } from "@expo/vector-icons";
 import tw from "@/src/lib/tw";
 import { useWeather } from "@/src/hooks/useWeather";
@@ -12,9 +13,10 @@ interface Props {
   city: SavedCity;
   onPress: () => void;
   onRemove: () => void;
+  index?: number;
 }
 
-export default function SavedCityRow({ city, onPress, onRemove }: Props) {
+export default function SavedCityRow({ city, onPress, onRemove, index = 0 }: Props) {
   const swipeRef = useRef<Swipeable>(null);
   const { data } = useWeather(city.lat, city.lon);
 
@@ -45,6 +47,11 @@ export default function SavedCityRow({ city, onPress, onRemove }: Props) {
   }
 
   return (
+    <MotiView
+      from={{ opacity: 0, translateX: 24 }}
+      animate={{ opacity: 1, translateX: 0 }}
+      transition={{ type: "timing", duration: 380, delay: index * 70 }}
+    >
     <Swipeable
       ref={swipeRef}
       renderRightActions={renderRightActions}
@@ -74,5 +81,6 @@ export default function SavedCityRow({ city, onPress, onRemove }: Props) {
         </View>
       </Pressable>
     </Swipeable>
+    </MotiView>
   );
 }

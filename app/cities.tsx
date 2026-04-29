@@ -63,9 +63,10 @@ export default function CitiesScreen() {
           paddingHorizontal: 16,
           paddingBottom: insets.bottom + 24,
         }}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <SavedCityRow
             city={item}
+            index={index}
             onPress={() => router.push(`/city/${makeCityId(item.lat, item.lon)}`)}
             onRemove={() => removeCity.mutate(item.id)}
           />

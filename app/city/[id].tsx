@@ -10,13 +10,15 @@ import { HomeSkeleton } from "@/src/components/SkeletonBlock";
 import ErrorState from "@/src/components/ErrorState";
 import HourlyStrip from "@/src/components/HourlyStrip";
 import ForecastList from "@/src/components/ForecastList";
+import AnimatedWeatherIcon from "@/src/components/AnimatedWeatherIcon";
+import AnimatedTemp from "@/src/components/AnimatedTemp";
 import {
   getWeatherTheme,
   isNightTime,
   formatTemp,
   getWindDirection,
 } from "@/src/lib/weatherTheme";
-import { getWeatherKey, WEATHER_EMOJI } from "@/src/lib/iconMap";
+import { getWeatherKey } from "@/src/lib/iconMap";
 import { WeatherApiError } from "@/src/api/client";
 
 export default function CityDetailScreen() {
@@ -89,7 +91,6 @@ export default function CityDetailScreen() {
   const condition = current.weather[0];
   const night = isNightTime(current.dt, current.sunrise, current.sunset);
   const theme = getWeatherTheme(condition.id, night);
-  const emoji = WEATHER_EMOJI[getWeatherKey(condition.icon)];
 
   return (
     <LinearGradient colors={theme.gradient} style={{ flex: 1 }}>
@@ -126,15 +127,8 @@ export default function CityDetailScreen() {
 
         {/* Hero */}
         <View style={tw`items-center px-6 mb-8`}>
-          <Text style={{ fontSize: 72, lineHeight: 80 }}>{emoji}</Text>
-          <Text
-            style={[
-              tw`text-white font-thin tracking-tight`,
-              { fontSize: 96, lineHeight: 104 },
-            ]}
-          >
-            {formatTemp(current.temp)}
-          </Text>
+          <AnimatedWeatherIcon weatherKey={getWeatherKey(condition.icon)} size={72} />
+          <AnimatedTemp temp={current.temp} fontSize={96} />
           <Text style={tw`text-white text-2xl font-light capitalize mb-1`}>
             {condition.description}
           </Text>
