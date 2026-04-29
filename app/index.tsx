@@ -8,6 +8,8 @@ import { useDeviceLocation } from "@/src/hooks/useDeviceLocation";
 import { useWeather } from "@/src/hooks/useWeather";
 import { HomeSkeleton } from "@/src/components/SkeletonBlock";
 import ErrorState from "@/src/components/ErrorState";
+import HourlyStrip from "@/src/components/HourlyStrip";
+import ForecastList from "@/src/components/ForecastList";
 import {
   getWeatherTheme,
   isNightTime,
@@ -76,7 +78,13 @@ export default function HomeScreen() {
     return (
       <LinearGradient colors={["#0B1220", "#0F1F3D", "#0B1220"]} style={{ flex: 1 }}>
         <ErrorState
-          title={isRateLimit ? "Too many requests" : isAuth ? "Invalid API key" : "Couldn't load weather"}
+          title={
+            isRateLimit
+              ? "Too many requests"
+              : isAuth
+              ? "Invalid API key"
+              : "Couldn't load weather"
+          }
           message={
             isRateLimit
               ? "You've hit the API rate limit. Please wait a moment and try again."
@@ -92,17 +100,19 @@ export default function HomeScreen() {
 
   if (!data) return null;
 
-  const { current, daily, timezone_offset } = data;
+  const { current, hourly, daily, timezone_offset } = data;
   const condition = current.weather[0];
   const night = isNightTime(current.dt, current.sunrise, current.sunset);
   const theme = getWeatherTheme(condition.id, night);
-  const weatherKey = getWeatherKey(condition.icon);
-  const emoji = WEATHER_EMOJI[weatherKey];
+  const emoji = WEATHER_EMOJI[getWeatherKey(condition.icon)];
 
   return (
     <LinearGradient colors={theme.gradient} style={{ flex: 1 }}>
       <ScrollView
-        contentContainerStyle={{ paddingTop: insets.top + 16, paddingBottom: insets.bottom + 24 }}
+        contentContainerStyle={{
+          paddingTop: insets.top + 16,
+          paddingBottom: insets.bottom + 32,
+        }}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -144,52 +154,49 @@ export default function HomeScreen() {
           </Text>
         </View>
 
-        {/* ── Detail pills ── */}
-        <View style={tw`flex-row mx-6 gap-3 mb-8`}>
-          <DetailPill icon="water-outline" label="Humidity" value={`${current.humidity}%`} />
+        {/* ── Detail pills row 1 ── */}
+        <View style={tw`flex-row mx-6 gap-3 mb-3`}>
+          <DetailPill
+            icon="water-outline"
+            label="Humidity"
+            value={`${current.humidity}%`}
+          />
           <DetailPill
             icon="navigate-outline"
             label="Wind"
             value={`${Math.round(current.wind_speed)} m/s ${getWindDirection(current.wind_deg)}`}
           />
-          <DetailPill icon="eye-outline" label="Visibility" value={`${Math.round((current.visibility ?? 0) / 1000)} km`} />
+          <DetailPill
+            icon="eye-outline"
+            label="Visibility"
+            value={`${Math.round((current.visibility ?? 0) / 1000)} km`}
+          />
         </View>
 
-        {/* ── UV + pressure row ── */}
+        {/* ── Detail pills row 2 ── */}
         <View style={tw`flex-row mx-6 gap-3 mb-8`}>
-          <DetailPill icon="sunny-outline" label="UV Index" value={String(Math.round(current.uvi))} />
-          <DetailPill icon="speedometer-outline" label="Pressure" value={`${current.pressure} hPa`} />
-          <DetailPill icon="thermometer-outline" label="Dew Point" value={formatTemp(current.dew_point)} />
+          <DetailPill
+            icon="sunny-outline"
+            label="UV Index"
+            value={String(Math.round(current.uvi))}
+          />
+          <DetailPill
+            icon="speedometer-outline"
+            label="Pressure"
+            value={`${current.pressure} hPa`}
+          />
+          <DetailPill
+            icon="thermometer-outline"
+            label="Dew Point"
+            value={formatTemp(current.dew_point)}
+          />
         </View>
 
-        {/* ── 5-day daily strip ── */}
-        <View style={tw`mx-6`}>
-          <Text style={tw`text-slate-400 text-xs font-semibold tracking-widest mb-3`}>
-            5-DAY FORECAST
-          </Text>
-          {daily.slice(1, 6).map((day) => {
-            const dayKey = getWeatherKey(day.weather[0].icon);
-            const dayEmoji = WEATHER_EMOJI[dayKey];
-            const dayLabel = new Date(
-              (day.dt + timezone_offset) * 1000
-            ).toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" });
-            return (
-              <View
-                key={day.dt}
-                style={tw`flex-row items-center justify-between py-3 border-b border-white/10`}
-              >
-                <Text style={tw`text-white text-sm w-10`}>{dayLabel}</Text>
-                <Text style={{ fontSize: 20 }}>{dayEmoji}</Text>
-                <Text style={tw`text-slate-400 text-sm`}>
-                  {Math.round(day.temp.min)}°
-                </Text>
-                <Text style={tw`text-white text-sm font-medium`}>
-                  {Math.round(day.temp.max)}°
-                </Text>
-              </View>
-            );
-          })}
-        </View>
+        {/* ── Hourly strip ── */}
+        <HourlyStrip hours={hourly} timezoneOffset={timezone_offset} />
+
+        {/* ── 8-day forecast ── */}
+        <ForecastList daily={daily} timezoneOffset={timezone_offset} />
       </ScrollView>
     </LinearGradient>
   );
