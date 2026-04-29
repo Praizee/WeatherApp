@@ -22,7 +22,8 @@ import { getWeatherKey } from "@/src/lib/iconMap";
 import { WeatherApiError } from "@/src/api/client";
 
 export default function CityDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, name: nameParam, country: countryParam, state: stateParam } =
+    useLocalSearchParams<{ id: string; name?: string; country?: string; state?: string }>();
   const { lat, lon } = parseCityId(id);
   const insets = useSafeAreaInsets();
 
@@ -32,7 +33,9 @@ export default function CityDetailScreen() {
   const removeCity = useRemoveCity();
 
   const cityInfo = savedCities?.find((c) => c.id === id);
-  const cityName = cityInfo?.name ?? "City";
+  const cityName = cityInfo?.name ?? nameParam ?? "Unknown City";
+  const cityCountry = cityInfo?.country ?? countryParam ?? "";
+  const cityState = cityInfo?.state ?? stateParam;
   const isSaved = Boolean(cityInfo);
 
   function toggleSave() {
@@ -42,8 +45,8 @@ export default function CityDetailScreen() {
       addCity.mutate({
         id: makeCityId(lat, lon),
         name: cityName,
-        country: cityInfo?.country ?? "",
-        state: cityInfo?.state,
+        country: cityCountry,
+        state: cityState,
         lat,
         lon,
       });

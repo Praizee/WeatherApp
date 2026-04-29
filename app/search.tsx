@@ -57,7 +57,9 @@ export default function SearchScreen() {
 
   function handleNavigate(result: GeoResult) {
     const id = makeCityId(result.lat, result.lon);
-    router.push(`/city/${id}`);
+    const params = new URLSearchParams({ name: result.name, country: result.country });
+    if (result.state) params.set("state", result.state);
+    router.push(`/city/${id}?${params.toString()}`);
   }
 
   return (
