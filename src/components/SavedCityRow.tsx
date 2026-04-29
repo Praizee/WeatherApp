@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { View, Text, Pressable } from "react-native";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { MotiView } from "moti";
+import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
 import tw from "@/src/lib/tw";
 import { useWeather } from "@/src/hooks/useWeather";
@@ -28,6 +29,7 @@ export default function SavedCityRow({ city, onPress, onRemove, index = 0 }: Pro
   const description = current?.weather[0].description ?? "";
 
   function handleDelete() {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     swipeRef.current?.close();
     onRemove();
   }

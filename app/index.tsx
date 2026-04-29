@@ -6,6 +6,7 @@ import { router } from "expo-router";
 import tw from "@/src/lib/tw";
 import { useDeviceLocation } from "@/src/hooks/useDeviceLocation";
 import { useWeather } from "@/src/hooks/useWeather";
+import { useReverseGeo } from "@/src/hooks/useReverseGeo";
 import { HomeSkeleton } from "@/src/components/SkeletonBlock";
 import ErrorState from "@/src/components/ErrorState";
 import HourlyStrip from "@/src/components/HourlyStrip";
@@ -29,6 +30,7 @@ export default function HomeScreen() {
   const lon = location.status === "ready" ? location.lon : null;
 
   const { data, isLoading, isFetching, error, refetch } = useWeather(lat, lon);
+  const { data: cityName } = useReverseGeo(lat, lon);
 
   // --- location loading / error states ---
   if (location.status === "loading") {
@@ -129,7 +131,7 @@ export default function HomeScreen() {
             <Ionicons name="bookmark-outline" size={22} color="#ffffff" />
           </Pressable>
           <Text style={tw`text-white text-sm font-medium tracking-wide`}>
-            My Location
+            {cityName ?? "My Location"}
           </Text>
           <Pressable onPress={() => router.push("/search")} hitSlop={12}>
             <Ionicons name="search-outline" size={22} color="#ffffff" />

@@ -1,4 +1,5 @@
 import { View, Text, Pressable } from "react-native";
+import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
 import tw from "@/src/lib/tw";
 
@@ -30,7 +31,10 @@ export default function ErrorState({
       </Text>
       {onRetry && (
         <Pressable
-          onPress={onRetry}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            onRetry();
+          }}
           style={({ pressed }) =>
             tw`bg-blue-600 px-6 py-3 rounded-full mb-3 ${pressed ? "opacity-70" : ""}`
           }

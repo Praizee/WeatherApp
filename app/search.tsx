@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
+import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
 import tw from "@/src/lib/tw";
 import { useCitySearch } from "@/src/hooks/useCitySearch";
@@ -42,6 +43,7 @@ export default function SearchScreen() {
   const savedIds = new Set((savedCities ?? []).map((c) => c.id));
 
   function handleAdd(result: GeoResult) {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const id = makeCityId(result.lat, result.lon);
     addCity.mutate({
       id,
