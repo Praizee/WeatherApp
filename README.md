@@ -156,9 +156,6 @@ src/
 
 ## Screenshots
 
-> Add screenshots here later...
-
-| Home           | Forecast expanded | Search         | Saved cities   |
-| -------------- | ----------------- | -------------- | -------------- |
-| _(screenshot)_ | _(screenshot)_    | _(screenshot)_ | _(screenshot)_ |
-
+| Home | Forecast expanded | Search | Saved cities |
+| :---: | :---: | :---: | :---: |
+| <img src="https://github.com/user-attachments/assets/d3277fc3-a18f-4626-b1b8-0cad1213bfc5" width="250" alt="Home" /> | <img src="https://github.com/user-attachments/assets/2f0435b8-e28f-441b-bc9e-1f44e2131d76" width="250" alt="Forecast expanded" /> | <img src="https://github.com/user-attachments/assets/bd988193-0f0e-4894-be4d-66be7376f5ac" width="250" alt="Search" /> | <img src="https://github.com/user-attachments/assets/b43ec76f-d515-4710-9a86-efbf9a6767c1" width="250" alt="Saved cities" /> |
