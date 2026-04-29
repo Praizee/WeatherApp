@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
 import * as Location from "expo-location";
+import { useEffect, useState } from "react";
 
 export type LocationState =
   | { status: "loading" }
@@ -23,8 +23,24 @@ export function useDeviceLocation(): LocationState {
           return;
         }
 
+        // Try last known first incase getCurrentPositionAsync is null.
+        const last = await Location.getLastKnownPositionAsync({
+          maxAge: 5 * 60 * 1000, // accept positions up to 5 min old
+          requiredAccuracy: 5000, // accept up to 5 km accuracy
+        }).catch(() => null);
+
+        if (last && !cancelled) {
+          setState({
+            status: "ready",
+            lat: last.coords.latitude,
+            lon: last.coords.longitude,
+          });
+          return;
+        }
+
+        // lower accuracy to maximise emulator compatibility
         const loc = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Balanced,
+          accuracy: Location.Accuracy.Lowest,
         });
         if (cancelled) return;
 
@@ -35,10 +51,12 @@ export function useDeviceLocation(): LocationState {
         });
       } catch (e) {
         if (cancelled) return;
-        setState({
-          status: "error",
-          message: e instanceof Error ? e.message : "Could not get location",
-        });
+        const raw = e instanceof Error ? e.message : "Could not get location";
+        // friendlier message for the common "services disabled" case
+        const message = raw.toLowerCase().includes("unavailable")
+          ? "Location services are disabled. Enable them in device settings, or search for a city manually."
+          : raw;
+        setState({ status: "error", message });
       }
     }
 
@@ -50,3 +68,4 @@ export function useDeviceLocation(): LocationState {
 
   return state;
 }
+
