@@ -48,7 +48,8 @@ export default function HomeScreen() {
           icon="location-outline"
           title="Location access denied"
           message="Grant location permission so WeatherApp can show your local weather, or search for a city manually."
-          action={{ label: "Search for a city →", onPress: () => router.push("/search") }}
+          action={{ label: "Search for a city", onPress: () => router.push("/search") }}
+          secondaryAction={{ label: "View saved cities", onPress: () => router.push("/cities") }}
         />
       </LinearGradient>
     );
@@ -60,7 +61,8 @@ export default function HomeScreen() {
         <ErrorState
           title="Couldn't get location"
           message={location.message}
-          action={{ label: "Search for a city →", onPress: () => router.push("/search") }}
+          action={{ label: "Search for a city", onPress: () => router.push("/search") }}
+          secondaryAction={{ label: "View saved cities", onPress: () => router.push("/cities") }}
         />
       </LinearGradient>
     );
@@ -97,6 +99,7 @@ export default function HomeScreen() {
               : "Check your internet connection and try again."
           }
           onRetry={() => refetch()}
+          action={{ label: "View saved cities", onPress: () => router.push("/cities") }}
         />
       </LinearGradient>
     );

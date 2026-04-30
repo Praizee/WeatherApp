@@ -10,6 +10,7 @@ interface Props {
   retryLabel?: string;
   icon?: keyof typeof Ionicons.glyphMap;
   action?: { label: string; onPress: () => void };
+  secondaryAction?: { label: string; onPress: () => void };
 }
 
 export default function ErrorState({
@@ -19,6 +20,7 @@ export default function ErrorState({
   retryLabel = "Try again",
   icon = "cloud-offline-outline",
   action,
+  secondaryAction,
 }: Props) {
   return (
     <View style={tw`flex-1 items-center justify-center px-8`}>
@@ -43,8 +45,15 @@ export default function ErrorState({
         </Pressable>
       )}
       {action && (
-        <Pressable onPress={action.onPress}>
+        <Pressable onPress={action.onPress} style={tw`flex-row items-center gap-1`}>
           <Text style={tw`text-blue-400 text-sm`}>{action.label}</Text>
+          <Ionicons name="arrow-forward" size={14} color="#60A5FA" />
+        </Pressable>
+      )}
+      {secondaryAction && (
+        <Pressable onPress={secondaryAction.onPress} style={tw`flex-row items-center gap-1 mt-3`}>
+          <Text style={tw`text-slate-400 text-sm`}>{secondaryAction.label}</Text>
+          <Ionicons name="arrow-forward" size={14} color="#64748B" />
         </Pressable>
       )}
     </View>

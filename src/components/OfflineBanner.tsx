@@ -16,14 +16,15 @@ const BANNER_HEIGHT = 40;
 export default function OfflineBanner() {
   const { isConnected } = useNetworkStatus();
   const insets = useSafeAreaInsets();
-  const translateY = useSharedValue(-(BANNER_HEIGHT + insets.top));
+  const totalHeight = BANNER_HEIGHT + insets.bottom;
+  const translateY = useSharedValue(totalHeight);
 
   useEffect(() => {
-    translateY.value = withTiming(isConnected ? -(BANNER_HEIGHT + insets.top) : 0, {
+    translateY.value = withTiming(isConnected ? totalHeight : 0, {
       duration: 320,
       easing: Easing.out(Easing.quad),
     });
-  }, [isConnected, translateY, insets.top]);
+  }, [isConnected, translateY, totalHeight]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
@@ -35,14 +36,14 @@ export default function OfflineBanner() {
         animatedStyle,
         tw`absolute left-0 right-0 z-50`,
         {
-          top: 0,
-          height: BANNER_HEIGHT + insets.top,
+          bottom: 0,
+          height: totalHeight,
           backgroundColor: "#1E3A5F",
-          justifyContent: "flex-end",
+          justifyContent: "flex-start",
         },
       ]}
     >
-      <View style={tw`flex-row items-center justify-center gap-2 pb-2`}>
+      <View style={tw`flex-row items-center justify-center gap-2 pt-2`}>
         <Ionicons name="cloud-offline-outline" size={15} color="#93C5FD" />
         <Text style={tw`text-blue-200 text-xs font-medium`}>
           No internet connection — showing cached data

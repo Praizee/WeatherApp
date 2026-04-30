@@ -68,11 +68,9 @@ function HourCard({
     >
       <Text style={tw`text-slate-300 text-xs mb-2`}>{label}</Text>
       <Text style={{ fontSize: 22, marginBottom: 8 }}>{emoji}</Text>
-      {item.pop > 0 && (
-        <Text style={tw`text-blue-400 text-xs mb-1`}>
-          {Math.round(item.pop * 100)}%
-        </Text>
-      )}
+      <Text style={tw`text-blue-400 text-xs mb-1`}>
+        {item.pop > 0 ? `${Math.round(item.pop * 100)}%` : ""}
+      </Text>
       <Text style={tw`text-white text-sm font-semibold`}>
         {formatTemp(item.temp)}
       </Text>
