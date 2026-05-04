@@ -10,7 +10,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "web:build": "expo export --platform web --output-dir dist",
-    "electron:dev": "concurrently -n expo,electron \"pnpm web\" \"wait-on http://localhost:8081 && cross-env IS_ELECTRON=true electron electron/main.js\"",
+    "electron:dev": "concurrently -n expo,electron \"pnpm web\" \"wait-on --timeout 120000 http-get://localhost:8081/node_modules/expo-router/entry.bundle?platform=web && cross-env IS_ELECTRON=true electron electron/main.js\"",
+    "electron:start": "cross-env IS_ELECTRON=true electron electron/main.js",
     "electron:build": "pnpm web:build && electron-builder --linux"
   },
   "pnpm": {

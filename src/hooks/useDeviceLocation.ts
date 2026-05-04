@@ -1,5 +1,6 @@
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
+import { isElectron } from "@/src/platform/electron";
 
 export type LocationState =
   | { status: "loading" }
@@ -11,6 +12,12 @@ export function useDeviceLocation(): LocationState {
   const [state, setState] = useState<LocationState>({ status: "loading" });
 
   useEffect(() => {
+    // Desktop has no GPS — skip straight to the denied/search state
+    if (isElectron()) {
+      setState({ status: "denied" });
+      return;
+    }
+
     let cancelled = false;
 
     async function request() {

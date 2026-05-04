@@ -1,12 +1,12 @@
-import React, { useRef, useState } from 'react';
-import { Pressable, Platform, StyleProp, ViewStyle } from 'react-native';
+import React, { useRef, useEffect, useState } from 'react';
+import { Pressable, Platform, StyleProp, ViewStyle, View } from 'react-native';
 
 type RenderProps = { hovered: boolean; pressed: boolean };
 
 interface HoverPressableProps {
   onPress?: () => void;
   onLongPress?: () => void;
-  onContextMenu?: (e: React.SyntheticEvent) => void;
+  onContextMenu?: (e: any) => void;
   style?: StyleProp<ViewStyle>;
   hoverStyle?: StyleProp<ViewStyle>;
   pressStyle?: StyleProp<ViewStyle>;
@@ -31,18 +31,30 @@ export default function HoverPressable({
   disabled,
 }: HoverPressableProps) {
   const [hovered, setHovered] = useState(false);
+  const ref = useRef<View>(null);
+
+  // react-native-web Pressable silently drops unknown event props like onContextMenu,
+  // so we attach contextmenu directly to the DOM node via ref.
+  useEffect(() => {
+    if (Platform.OS !== 'web' || !onContextMenu) return;
+    const domNode = (ref.current as any);
+    if (!domNode) return;
+    const handler = (e: Event) => { e.preventDefault(); onContextMenu(e); };
+    domNode.addEventListener('contextmenu', handler);
+    return () => domNode.removeEventListener('contextmenu', handler);
+  }, [onContextMenu]);
 
   const webHandlers =
     Platform.OS === 'web'
       ? {
           onMouseEnter: () => setHovered(true),
           onMouseLeave: () => setHovered(false),
-          onContextMenu,
         }
       : {};
 
   return (
     <Pressable
+      ref={ref as any}
       onPress={onPress}
       onLongPress={onLongPress}
       disabled={disabled}

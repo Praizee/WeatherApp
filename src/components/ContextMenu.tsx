@@ -1,6 +1,4 @@
-// renders context menu overlay on web/native.
-// Returns null until for now...
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Text, Pressable, StyleSheet, Platform } from 'react-native';
 import { MotiView } from 'moti';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,23 +7,33 @@ import { isElectron, getIPC } from '@/src/platform/electron';
 
 export default function ContextMenuOverlay() {
   const { visible, x, y, items, close } = useContextMenu();
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
 
-  // On Electron, delegate to native OS context menu via IPC
+  // Register click handler once on mount — persists across open/close cycles so
+  // calling close() to dismiss the React state doesn't remove the listener.
+  useEffect(() => {
+    if (!isElectron()) return;
+    const ipc = getIPC();
+    if (!ipc) return;
+    const handler = (...args: unknown[]) => {
+      const idx = args[1] as number;
+      itemsRef.current[idx]?.onPress();
+      close();
+    };
+    ipc.on('context-menu-click', handler);
+    return () => ipc.removeListener('context-menu-click', handler);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Send items to native Electron menu when opened
   useEffect(() => {
     if (!visible || !isElectron()) return;
     const ipc = getIPC();
     if (!ipc) return;
     const nativeItems = items.map(({ label, destructive }) => ({ label, destructive: !!destructive }));
     ipc.send('context-menu', nativeItems);
-    // IPC response comes back as 'context-menu-click' with the item index
-    const handler = (...args: unknown[]) => {
-      const idx = args[1] as number;
-      items[idx]?.onPress();
-      close();
-    };
-    ipc.on('context-menu-click', handler);
-    close(); // dismiss React overlay; native menu is now showing
-    return () => ipc.removeListener('context-menu-click', handler);
+    close(); // dismiss React state; native OS menu is now showing
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
@@ -47,7 +55,7 @@ export default function ContextMenuOverlay() {
         style={[
           styles.menu,
           {
-            left: Math.min(x, (Platform.OS === 'web' ? window.innerWidth : 400) - 200),
+            left: Math.min(x, (typeof window !== 'undefined' ? window.innerWidth : 400) - 200),
             top: y,
           },
         ]}

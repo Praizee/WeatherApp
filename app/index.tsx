@@ -23,6 +23,7 @@ import { getWeatherKey } from "@/src/lib/iconMap";
 import { WeatherApiError } from "@/src/api/client";
 import { useContextMenu } from "@/src/context/ContextMenuContext";
 import { copyToClipboard } from "@/src/lib/clipboard";
+import { isElectron } from "@/src/platform/electron";
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -48,9 +49,13 @@ export default function HomeScreen() {
     return (
       <LinearGradient colors={["#0B1220", "#0F1F3D", "#0B1220"]} style={{ flex: 1 }}>
         <ErrorState
-          icon="location-outline"
-          title="Location access denied"
-          message="Grant location permission so WeatherApp can show your local weather, or search for a city manually."
+          icon={isElectron() ? "desktop-outline" : "location-outline"}
+          title={isElectron() ? "Search for a city" : "Location access denied"}
+          message={
+            isElectron()
+              ? "GPS isn't available on desktop. Search for any city to get its weather."
+              : "Grant location permission so WeatherApp can show your local weather, or search for a city manually."
+          }
           action={{ label: "Search for a city", onPress: () => router.push("/search") }}
           secondaryAction={{ label: "View saved cities", onPress: () => router.push("/cities") }}
         />
