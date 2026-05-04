@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text } from "react-native";
+import HoverPressable from "./HoverPressable";
 import { MotiView } from "moti";
 import Animated, {
   useAnimatedStyle,
@@ -123,9 +124,12 @@ function ForecastRow({
   return (
     <View style={tw`border-b border-white/10`}>
       {/* Summary row */}
-      <Pressable
+      <HoverPressable
         onPress={onToggle}
-        style={({ pressed }) => [tw`flex-row items-center py-3`, pressed && { opacity: 0.75 }]}
+        accessibilityLabel={`${dayLabel} forecast, tap to expand`}
+        style={tw`flex-row items-center py-3`}
+        pressStyle={{ opacity: 0.75 }}
+        hoverStyle={{ opacity: 0.85 }}
       >
         <Text style={tw`text-white text-sm w-10`}>{dayLabel}</Text>
         <Text style={{ fontSize: 20, marginRight: 8 }}>{emoji}</Text>
@@ -152,7 +156,7 @@ function ForecastRow({
           color="#64748B"
           style={tw`ml-1`}
         />
-      </Pressable>
+      </HoverPressable>
 
       {/* Expanded detail */}
       <Animated.View style={animatedStyle}>

@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import HoverPressable from "@/src/components/HoverPressable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
@@ -70,9 +71,9 @@ export default function SearchScreen() {
       <View style={{ paddingTop: insets.top + 12, flex: 1 }}>
         {/* Header */}
         <View style={tw`flex-row items-center px-4 mb-4 gap-3`}>
-          <Pressable onPress={() => router.back()} hitSlop={12}>
+          <HoverPressable onPress={() => router.back()} accessibilityLabel="Go back">
             <Ionicons name="arrow-back" size={22} color="#fff" />
-          </Pressable>
+          </HoverPressable>
           <View
             style={[
               tw`flex-1 flex-row items-center rounded-2xl px-4 gap-2`,
@@ -141,31 +142,36 @@ export default function SearchScreen() {
             const subtitle = [item.state, item.country].filter(Boolean).join(", ");
 
             return (
-              <Pressable
+              <HoverPressable
                 onPress={() => handleNavigate(item)}
-                style={({ pressed }) => [
-                  tw`flex-row items-center justify-between py-4 border-b border-white/8`,
-                  pressed && { opacity: 0.7 },
-                ]}
+                accessibilityLabel={`View weather for ${item.name}`}
+                style={[tw`flex-row items-center justify-between py-4 border-b border-white/8`]}
+                pressStyle={{ opacity: 0.7 }}
+                hoverStyle={{ backgroundColor: "rgba(255,255,255,0.04)" }}
               >
-                <View style={tw`flex-1 mr-4`}>
-                  <Text style={tw`text-white text-base font-medium`}>{item.name}</Text>
-                  {subtitle ? (
-                    <Text style={tw`text-slate-400 text-xs mt-0.5`}>{subtitle}</Text>
-                  ) : null}
-                </View>
-                <Pressable
-                  onPress={() => handleAdd(item)}
-                  hitSlop={12}
-                  disabled={isSaved}
-                >
-                  <Ionicons
-                    name={isSaved ? "bookmark" : "bookmark-outline"}
-                    size={20}
-                    color={isSaved ? "#60A5FA" : "#64748B"}
-                  />
-                </Pressable>
-              </Pressable>
+                {() => (
+                  <>
+                    <View style={tw`flex-1 mr-4`}>
+                      <Text style={tw`text-white text-base font-medium`}>{item.name}</Text>
+                      {subtitle ? (
+                        <Text style={tw`text-slate-400 text-xs mt-0.5`}>{subtitle}</Text>
+                      ) : null}
+                    </View>
+                    <HoverPressable
+                      onPress={() => handleAdd(item)}
+                      disabled={isSaved}
+                      accessibilityLabel={isSaved ? "Already saved" : `Save ${item.name}`}
+                      hoverStyle={{ opacity: 0.7 }}
+                    >
+                      <Ionicons
+                        name={isSaved ? "bookmark" : "bookmark-outline"}
+                        size={20}
+                        color={isSaved ? "#60A5FA" : "#64748B"}
+                      />
+                    </HoverPressable>
+                  </>
+                )}
+              </HoverPressable>
             );
           }}
         />
