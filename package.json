@@ -14,7 +14,11 @@
     "electron:build": "pnpm web:build && electron-builder --linux"
   },
   "pnpm": {
-    "allowBuild": ["electron", "electron-winstaller", "unrs-resolver"]
+    "allowBuild": [
+      "electron",
+      "electron-winstaller",
+      "unrs-resolver"
+    ]
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -69,3 +73,4 @@
   },
   "private": true
 }
+

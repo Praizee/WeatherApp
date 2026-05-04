@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Animated, View, ViewStyle } from "react-native";
+import LottieWeatherIcon from "./LottieWeatherIcon";
 
 interface Props {
   width?: ViewStyle["width"];
@@ -54,6 +55,10 @@ export default function SkeletonBlock({
 export function HomeSkeleton() {
   return (
     <View style={{ flex: 1, paddingHorizontal: 24, paddingTop: 80 }}>
+      {/* loading animation */}
+      <View style={{ alignItems: "center", marginBottom: 16 }}>
+        <LottieWeatherIcon weatherKey="loading" size={72} />
+      </View>
       {/* location */}
       <SkeletonBlock width={140} height={16} style={{ marginBottom: 8 }} />
       {/* temp */}

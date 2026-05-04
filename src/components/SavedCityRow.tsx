@@ -6,9 +6,10 @@ import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
 import tw from "@/src/lib/tw";
 import { useWeather } from "@/src/hooks/useWeather";
-import { getWeatherKey, WEATHER_EMOJI } from "@/src/lib/iconMap";
+import { getWeatherKey } from "@/src/lib/iconMap";
 import { formatTemp } from "@/src/lib/weatherTheme";
 import HoverPressable from "./HoverPressable";
+import LottieWeatherIcon from "./LottieWeatherIcon";
 import type { SavedCity } from "@/src/hooks/useSavedCities";
 
 interface Props {
@@ -23,9 +24,7 @@ export default function SavedCityRow({ city, onPress, onRemove, index = 0 }: Pro
   const { data } = useWeather(city.lat, city.lon);
 
   const current = data?.current;
-  const emoji = current
-    ? WEATHER_EMOJI[getWeatherKey(current.weather[0].icon)]
-    : "🌡️";
+  const weatherKey = current ? getWeatherKey(current.weather[0].icon) : 'loading';
   const temp = current ? formatTemp(current.temp) : "--°";
   const description = current?.weather[0].description ?? "";
 
@@ -70,7 +69,7 @@ export default function SavedCityRow({ city, onPress, onRemove, index = 0 }: Pro
           </Pressable>
         )}
         <View style={tw`items-end`}>
-          <Text style={{ fontSize: 28 }}>{emoji}</Text>
+          <LottieWeatherIcon weatherKey={weatherKey} size={44} />
           <Text style={tw`text-white text-lg font-light`}>{temp}</Text>
         </View>
       </View>

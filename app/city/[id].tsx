@@ -10,7 +10,7 @@ import { HomeSkeleton } from "@/src/components/SkeletonBlock";
 import ErrorState from "@/src/components/ErrorState";
 import HourlyStrip from "@/src/components/HourlyStrip";
 import ForecastList from "@/src/components/ForecastList";
-import AnimatedWeatherIcon from "@/src/components/AnimatedWeatherIcon";
+import LottieWeatherIcon from "@/src/components/LottieWeatherIcon";
 import AnimatedTemp from "@/src/components/AnimatedTemp";
 import {
   getWeatherTheme,
@@ -130,7 +130,7 @@ export default function CityDetailScreen() {
 
         {/* Hero */}
         <View style={tw`items-center px-6 mb-8`}>
-          <AnimatedWeatherIcon weatherKey={getWeatherKey(condition.icon)} size={72} />
+          <LottieWeatherIcon weatherKey={getWeatherKey(condition.icon)} size={72} />
           <AnimatedTemp temp={current.temp} fontSize={96} />
           <Text style={tw`text-white text-2xl font-light capitalize mb-1`}>
             {condition.description}
