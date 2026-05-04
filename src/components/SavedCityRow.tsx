@@ -10,6 +10,8 @@ import { getWeatherKey } from "@/src/lib/iconMap";
 import { formatTemp } from "@/src/lib/weatherTheme";
 import HoverPressable from "./HoverPressable";
 import LottieWeatherIcon from "./LottieWeatherIcon";
+import { useContextMenu } from "@/src/context/ContextMenuContext";
+import { copyToClipboard } from "@/src/lib/clipboard";
 import type { SavedCity } from "@/src/hooks/useSavedCities";
 
 interface Props {
@@ -22,6 +24,7 @@ interface Props {
 export default function SavedCityRow({ city, onPress, onRemove, index = 0 }: Props) {
   const swipeRef = useRef<Swipeable>(null);
   const { data } = useWeather(city.lat, city.lon);
+  const { open: openMenu } = useContextMenu();
 
   const current = data?.current;
   const weatherKey = current ? getWeatherKey(current.weather[0].icon) : 'loading';
@@ -35,6 +38,12 @@ export default function SavedCityRow({ city, onPress, onRemove, index = 0 }: Pro
     }
     onRemove();
   }
+
+  const menuItems = [
+    { label: 'View weather',   icon: 'cloud-outline',  onPress: onPress },
+    { label: 'Copy city name', icon: 'copy-outline',   onPress: () => copyToClipboard(city.name) },
+    { label: 'Remove city',    icon: 'trash-outline',  onPress: handleDelete, destructive: true },
+  ];
 
   function renderRightActions() {
     return (
@@ -85,6 +94,11 @@ export default function SavedCityRow({ city, onPress, onRemove, index = 0 }: Pro
       {Platform.OS === 'web' ? (
         <HoverPressable
           onPress={onPress}
+          onLongPress={() => openMenu(0, 0, menuItems)}
+          onContextMenu={(e: any) => {
+            e.preventDefault();
+            openMenu(e.nativeEvent?.pageX ?? 0, e.nativeEvent?.pageY ?? 0, menuItems);
+          }}
           accessibilityLabel={`View weather for ${city.name}`}
           style={[
             tw`flex-row items-center justify-between px-5 py-4 mb-2 rounded-2xl`,

@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, Pressable, RefreshControl } from "react-native";
+import { ScrollView, View, Text, Pressable, RefreshControl, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,6 +21,8 @@ import {
 } from "@/src/lib/weatherTheme";
 import { getWeatherKey } from "@/src/lib/iconMap";
 import { WeatherApiError } from "@/src/api/client";
+import { useContextMenu } from "@/src/context/ContextMenuContext";
+import { copyToClipboard } from "@/src/lib/clipboard";
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -31,6 +33,7 @@ export default function HomeScreen() {
 
   const { data, isLoading, isFetching, error, refetch } = useWeather(lat, lon);
   const { data: cityName } = useReverseGeo(lat, lon);
+  const { open: openMenu } = useContextMenu();
 
   // --- location loading / error states ---
   if (location.status === "loading") {
@@ -112,6 +115,19 @@ export default function HomeScreen() {
   const night = isNightTime(current.dt, current.sunrise, current.sunset);
   const theme = getWeatherTheme(condition.id, night);
 
+  const heroMenuItems = [
+    { label: 'Copy temperature', icon: 'thermometer-outline', onPress: () => copyToClipboard(formatTemp(current.temp)) },
+    { label: 'Copy weather report', icon: 'copy-outline', onPress: () => copyToClipboard(`${formatTemp(current.temp)}, ${condition.description} in ${cityName ?? 'My Location'}`) },
+    { label: 'Refresh weather', icon: 'refresh-outline', onPress: () => refetch() },
+    { label: 'Search cities', icon: 'search-outline', onPress: () => router.push('/search') },
+  ];
+
+  function openHeroMenu(e: any) {
+    if (Platform.OS !== 'web') return;
+    e.preventDefault();
+    openMenu(e.nativeEvent?.pageX ?? 0, e.nativeEvent?.pageY ?? 0, heroMenuItems);
+  }
+
   return (
     <LinearGradient colors={theme.gradient} style={{ flex: 1 }}>
       <ScrollView
@@ -142,7 +158,7 @@ export default function HomeScreen() {
         </View>
 
         {/* ── Hero ── */}
-        <View style={tw`items-center px-6 mb-8`}>
+        <View style={tw`items-center px-6 mb-8`} {...(Platform.OS === 'web' ? { onContextMenu: openHeroMenu } as any : {})}>
           <LottieWeatherIcon weatherKey={getWeatherKey(condition.icon)} size={72} />
           <AnimatedTemp temp={current.temp} fontSize={96} />
           <Text style={tw`text-white text-2xl font-light capitalize mb-1`}>
