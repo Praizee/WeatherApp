@@ -9,6 +9,36 @@ import { queryClient } from "@/src/query/client";
 import { persistOptions } from "@/src/query/persister";
 import { bootstrapNetInfo } from "@/src/lib/netStatus";
 import OfflineBanner from "@/src/components/OfflineBanner";
+import Sidebar from "@/src/components/Sidebar";
+import KeyboardShortcuts from "@/src/components/KeyboardShortcuts";
+import ContextMenuOverlay from "@/src/components/ContextMenu";
+import { ContextMenuProvider } from "@/src/context/ContextMenuContext";
+import { useBreakpoint } from "@/src/hooks/useBreakpoint";
+
+function AppShell() {
+  const { showSidebar, isTablet } = useBreakpoint();
+
+  return (
+    <ContextMenuProvider>
+      <KeyboardShortcuts />
+      <View style={{ flex: 1, flexDirection: "row" }}>
+        {showSidebar && <Sidebar collapsed={isTablet} />}
+        <View style={{ flex: 1 }}>
+          <StatusBar style="light" />
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: "#0B1220" },
+              animation: "slide_from_right",
+            }}
+          />
+          <OfflineBanner sidebarVisible={showSidebar} />
+        </View>
+      </View>
+      <ContextMenuOverlay />
+    </ContextMenuProvider>
+  );
+}
 
 export default function RootLayout() {
   useEffect(() => {
@@ -22,17 +52,7 @@ export default function RootLayout() {
           client={queryClient}
           persistOptions={persistOptions}
         >
-          <View style={{ flex: 1 }}>
-            <StatusBar style="light" />
-            <Stack
-              screenOptions={{
-                headerShown: false,
-                contentStyle: { backgroundColor: "#0B1220" },
-                animation: "slide_from_right",
-              }}
-            />
-            <OfflineBanner />
-          </View>
+          <AppShell />
         </PersistQueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

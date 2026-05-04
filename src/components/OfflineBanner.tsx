@@ -13,7 +13,11 @@ import tw from "@/src/lib/tw";
 
 const BANNER_HEIGHT = 40;
 
-export default function OfflineBanner() {
+interface OfflineBannerProps {
+  sidebarVisible?: boolean;
+}
+
+export default function OfflineBanner({ sidebarVisible = false }: OfflineBannerProps) {
   const { isConnected } = useNetworkStatus();
   const insets = useSafeAreaInsets();
   const totalHeight = BANNER_HEIGHT + insets.bottom;

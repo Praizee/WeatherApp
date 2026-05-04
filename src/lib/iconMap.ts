@@ -1,5 +1,5 @@
 // Maps OWM icon codes to a simple emoji label used as a fallback
-// and to a semantic key used in Phase 6 to pick Lottie animations.
+// and to a semantic key used in to pick Lottie animations.
 export type WeatherKey =
   | "clear-day"
   | "clear-night"
@@ -49,3 +49,4 @@ export const WEATHER_EMOJI: Record<WeatherKey, string> = {
 export function getWeatherKey(owmIconCode: string): WeatherKey {
   return OWM_ICON_MAP[owmIconCode] ?? "cloudy";
 }
+
