@@ -27,6 +27,7 @@ export default function SearchScreen() {
   const insets = useSafeAreaInsets();
   const [input, setInput] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -40,6 +41,30 @@ export default function SearchScreen() {
   const { data: results, isFetching, error } = useCitySearch(debouncedQuery);
   const { data: savedCities } = useSavedCities();
   const addCity = useAddCity();
+
+  // Reset selection when results change
+  useEffect(() => { setSelectedIndex(-1); }, [results]);
+
+  // Arrow-key navigation for web/desktop
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const list = results ?? [];
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setSelectedIndex(i => Math.min(i + 1, list.length - 1));
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setSelectedIndex(i => Math.max(i - 1, -1));
+      } else if (e.key === 'Enter' && selectedIndex >= 0 && list[selectedIndex]) {
+        e.preventDefault();
+        handleNavigate(list[selectedIndex]);
+      }
+    }
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [results, selectedIndex]);
 
   const savedIds = new Set((savedCities ?? []).map((c) => c.id));
 
@@ -136,16 +161,20 @@ export default function SearchScreen() {
           keyExtractor={(item) => `${item.lat}-${item.lon}`}
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: insets.bottom + 16 }}
-          renderItem={({ item }) => {
+          renderItem={({ item, index }) => {
             const id = makeCityId(item.lat, item.lon);
             const isSaved = savedIds.has(id);
             const subtitle = [item.state, item.country].filter(Boolean).join(", ");
+            const isKeySelected = selectedIndex === index;
 
             return (
               <HoverPressable
                 onPress={() => handleNavigate(item)}
                 accessibilityLabel={`View weather for ${item.name}`}
-                style={[tw`flex-row items-center justify-between py-4 border-b border-white/8`]}
+                style={[
+                  tw`flex-row items-center justify-between py-4 border-b border-white/8`,
+                  isKeySelected && { backgroundColor: "rgba(96,165,250,0.12)" },
+                ]}
                 pressStyle={{ opacity: 0.7 }}
                 hoverStyle={{ backgroundColor: "rgba(255,255,255,0.04)" }}
               >
