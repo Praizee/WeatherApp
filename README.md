@@ -13,7 +13,7 @@ A React Native (+Expo) weather app built for HNG 14 Mobile Track — runs on **A
 | Web (browser) | `pnpm web` | localhost:8081 |
 | Linux Desktop | `pnpm electron:dev` | Electron wrapping the web build |
 
-**Live web demo:** [https://your-vercel-url.vercel.app](https://your-vercel-url.vercel.app) _(replace with your Vercel URL)_
+**Live web demo:** [https://weather-app-seven-delta-35.vercel.app/](https://weather-app-seven-delta-35.vercel.app/)
 
 ---
 
@@ -245,6 +245,11 @@ src/
 
 ### Web & Desktop
 
-| Web (browser) | Desktop (Electron) |
-| :---: | :---: |
-| _(add web screenshot)_ | _(add Electron screenshot)_ |
+#### Web (browser)
+
+<img width="1918" height="1007" alt="image" src="https://github.com/user-attachments/assets/9f2551af-b340-4f71-89d1-c1dad3a2f2ff" /> 
+
+
+#### Desktop (Electron)
+
+_(add Electron screenshot)_ 
