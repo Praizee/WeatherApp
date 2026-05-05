@@ -169,7 +169,7 @@ pnpm electron:build
 
 > If you get a FUSE error on Ubuntu when running the AppImage: `sudo apt install libfuse2`
 
-**Download AppImage:** [Google Drive link](https://drive.google.com/your-link-here) _(replace with your Drive link)_
+**Download AppImage:** [Google Drive link](https://drive.google.com/file/d/1me-i_xI7YqN237zs41GOmpXvlc6ch9S2/view?usp=sharing)
 
 ---
 
