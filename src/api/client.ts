@@ -4,7 +4,9 @@ const BASE_URL = "https://api.openweathermap.org";
 
 function getKey(): string {
   const key =
-    (Constants.expoConfig?.extra?.owmKey as string | undefined) ?? "";
+    (Constants.expoConfig?.extra?.owmKey as string | undefined) ||
+    (typeof process !== "undefined" ? process.env.EXPO_PUBLIC_OWM_KEY : undefined) ||
+    "";
   if (!key) {
     console.warn(
       "[OWM] EXPO_PUBLIC_OWM_KEY is not set. Add it to your .env file."
