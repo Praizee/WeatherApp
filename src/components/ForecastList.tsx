@@ -160,7 +160,7 @@ function ForecastRow({
 
       {/* Expanded detail */}
       <Animated.View style={animatedStyle}>
-        <View style={tw`flex-row flex-wrap gap-x-6 gap-y-2 pb-3 pt-1`}>
+        <View style={[tw`flex-row flex-wrap gap-x-6 gap-y-2 pb-3 pt-2 px-2 rounded-xl`, { backgroundColor: 'rgba(0,0,0,0.2)' }]}>
           <DetailItem icon="water-outline" label="Humidity" value={`${day.humidity}%`} />
           <DetailItem
             icon="navigate-outline"
@@ -188,9 +188,9 @@ function DetailItem({
 }) {
   return (
     <View style={tw`flex-row items-center gap-1`}>
-      <Ionicons name={icon} size={13} color="#64748B" />
-      <Text style={tw`text-slate-400 text-xs`}>{label}: </Text>
-      <Text style={tw`text-slate-200 text-xs font-medium`}>{value}</Text>
+      <Ionicons name={icon} size={13} color="#94A3B8" />
+      <Text style={tw`text-slate-300 text-xs`}>{label}: </Text>
+      <Text style={tw`text-white text-xs font-medium`}>{value}</Text>
     </View>
   );
 }

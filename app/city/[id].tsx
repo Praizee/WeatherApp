@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, Pressable, RefreshControl } from "react-native";
+import { ScrollView, View, Text, Pressable, RefreshControl, Platform } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -21,6 +21,8 @@ import {
 } from "@/src/lib/weatherTheme";
 import { getWeatherKey } from "@/src/lib/iconMap";
 import { WeatherApiError } from "@/src/api/client";
+import { copyToClipboard } from "@/src/lib/clipboard";
+import ContextMenuZone from "@/src/components/ContextMenuZone";
 
 export default function CityDetailScreen() {
   const { id, name: nameParam, country: countryParam, state: stateParam } =
@@ -101,6 +103,13 @@ export default function CityDetailScreen() {
   const night = isNightTime(current.dt, current.sunrise, current.sunset);
   const theme = getWeatherTheme(condition.id, night);
 
+  const heroMenuItems = [
+    { label: 'Copy temperature', icon: 'thermometer-outline', onPress: () => copyToClipboard(formatTemp(current.temp)) },
+    { label: 'Copy weather report', icon: 'copy-outline', onPress: () => copyToClipboard(`${formatTemp(current.temp)}, ${condition.description} in ${cityName}`) },
+    { label: 'Refresh weather', icon: 'refresh-outline', onPress: () => refetch() },
+    ...(Platform.OS === 'web' ? [{ label: isSaved ? 'Remove city' : 'Save city', icon: isSaved ? 'trash-outline' : 'bookmark-outline', onPress: toggleSave, destructive: isSaved }] : []),
+  ];
+
   return (
     <LinearGradient colors={theme.gradient} style={{ flex: 1 }}>
       <ScrollView
@@ -142,7 +151,7 @@ export default function CityDetailScreen() {
           /* Desktop two-column layout */
           <View style={tw`flex-row px-6 gap-6`}>
             {/* Left: hero + pills */}
-            <View style={{ flex: 0.45 }}>
+            <ContextMenuZone style={{ flex: 0.45 }} items={heroMenuItems}>
               <View style={tw`items-center mb-8`}>
                 <LottieWeatherIcon weatherKey={getWeatherKey(condition.icon)} size={80} />
                 <AnimatedTemp temp={current.temp} fontSize={96} />
@@ -171,7 +180,7 @@ export default function CityDetailScreen() {
                 <DetailPill icon="speedometer-outline" label="Pressure" value={`${current.pressure} hPa`} />
                 <DetailPill icon="thermometer-outline" label="Dew Point" value={formatTemp(current.dew_point)} />
               </View>
-            </View>
+            </ContextMenuZone>
 
             {/* Right: hourly + forecast */}
             <View style={{ flex: 0.55 }}>
@@ -182,7 +191,7 @@ export default function CityDetailScreen() {
         ) : (
           <>
             {/* Hero */}
-            <View style={tw`items-center px-6 mb-8`}>
+            <ContextMenuZone style={tw`items-center px-6 mb-8`} items={heroMenuItems}>
               <LottieWeatherIcon weatherKey={getWeatherKey(condition.icon)} size={72} />
               <AnimatedTemp temp={current.temp} fontSize={96} />
               <Text style={tw`text-white text-2xl font-light capitalize mb-1`}>
@@ -191,7 +200,7 @@ export default function CityDetailScreen() {
               <Text style={tw`text-slate-300 text-sm`}>
                 Feels like {formatTemp(current.feels_like)}
               </Text>
-            </View>
+            </ContextMenuZone>
 
             {/* Detail pills row 1 */}
             <View style={tw`flex-row mx-6 gap-3 mb-3`}>

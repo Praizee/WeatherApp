@@ -30,8 +30,10 @@ export default function ContextMenuOverlay() {
   useEffect(() => {
     if (!visible || !isElectron()) return;
     const ipc = getIPC();
+    console.log('[ContextMenu] Electron path — visible:', visible, 'ipc:', !!ipc);
     if (!ipc) return;
     const nativeItems = items.map(({ label, destructive }) => ({ label, destructive: !!destructive }));
+    console.log('[ContextMenu] sending context-menu IPC:', nativeItems);
     ipc.send('context-menu', nativeItems);
     close(); // dismiss React state; native OS menu is now showing
   // eslint-disable-next-line react-hooks/exhaustive-deps

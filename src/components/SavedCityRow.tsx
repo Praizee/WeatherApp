@@ -96,8 +96,8 @@ export default function SavedCityRow({ city, onPress, onRemove, index = 0 }: Pro
           onPress={onPress}
           onLongPress={() => openMenu(0, 0, menuItems)}
           onContextMenu={(e: any) => {
-            e.preventDefault();
-            openMenu(e.nativeEvent?.pageX ?? 0, e.nativeEvent?.pageY ?? 0, menuItems);
+            e.preventDefault?.();
+            openMenu(e.pageX ?? e.nativeEvent?.pageX ?? 0, e.pageY ?? e.nativeEvent?.pageY ?? 0, menuItems);
           }}
           accessibilityLabel={`View weather for ${city.name}`}
           style={[

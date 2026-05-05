@@ -86,13 +86,17 @@ app.on('window-all-closed', () => {
 
 // Native context menu from renderer
 ipcMain.on('context-menu', (event, items) => {
-  const win = BrowserWindow.fromWebContents(event.sender);
+  const webContents = event.sender; // capture ref before async closure
+  const win = BrowserWindow.fromWebContents(webContents);
+  console.log('[context-menu] received items:', items?.length, 'win:', win ? 'ok' : 'null');
   if (!win) return;
 
   const template = items.map((item, index) => ({
     label: item.label,
-    ...(item.destructive ? { type: 'normal' } : {}),
-    click: () => event.sender.send('context-menu-click', index),
+    click: () => {
+      console.log('[context-menu] clicked index:', index);
+      webContents.send('context-menu-click', index);
+    },
   }));
 
   Menu.buildFromTemplate(template).popup({ window: win });

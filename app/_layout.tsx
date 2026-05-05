@@ -18,6 +18,7 @@ import { useBreakpoint } from "@/src/hooks/useBreakpoint";
 function AppShell() {
   const { showSidebar, isTablet } = useBreakpoint();
 
+
   return (
     <ContextMenuProvider>
       <KeyboardShortcuts />

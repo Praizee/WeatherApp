@@ -27,8 +27,8 @@ export default function LottieWeatherIcon({ weatherKey, size = 72 }: Props) {
       source={LOTTIE_MAP[weatherKey]}
       autoPlay
       loop
+      resizeMode="cover"
       style={{ width: size, height: size }}
-      webStyle={{ width: size, height: size }}
     />
   );
 }
