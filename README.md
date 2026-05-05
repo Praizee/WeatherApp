@@ -1,10 +1,33 @@
 # Weather App
 
-A React Native (+Expo) weather app built for HNG 14 Mobile Track Stage 3. Fetches real-time weather from the OpenWeatherMap One Call API 3.0, caches all data with TanStack Query + AsyncStorage, and delivers a fluid animated experience.
+A React Native (+Expo) weather app built for HNG 14 Mobile Track — runs on **Android, iOS, Web, and Linux Desktop** from a single codebase. Fetches real-time weather from the OpenWeatherMap One Call API 3.0, caches all data with TanStack Query + AsyncStorage, and delivers a fluid animated experience across all platforms.
+
+---
+
+## Platform Support
+
+| Platform | How to run | Notes |
+| --- | --- | --- |
+| Android | `pnpm android` | Expo Go or APK |
+| iOS | `pnpm ios` | Expo Go |
+| Web (browser) | `pnpm web` | localhost:8081 |
+| Linux Desktop | `pnpm electron:dev` | Electron wrapping the web build |
+
+**Live web demo:** [https://your-vercel-url.vercel.app](https://your-vercel-url.vercel.app) _(replace with your Vercel URL)_
 
 ---
 
 ## Features
+
+### Desktop & Web (Stage 4)
+
+- Responsive sidebar navigation — full labels on desktop (≥1100 px), icons-only on tablet (≥768 px), hidden on mobile
+- Two-column layout on desktop: hero + detail pills on the left, hourly strip + forecast on the right
+- Saved cities switches to a 2-column grid on desktop
+- Right-click context menus — native OS menu on Electron, animated React overlay on web
+- 5 keyboard shortcuts (see table below)
+- Hover states and cursor pointer on all interactive elements
+- Electron desktop app with native app menu, AppImage + deb + tar.gz Linux builds
 
 ### Current Weather
 
@@ -46,19 +69,35 @@ A React Native (+Expo) weather app built for HNG 14 Mobile Track Stage 3. Fetche
 
 ---
 
+## Keyboard Shortcuts
+
+| Shortcut | Action |
+| --- | --- |
+| `Ctrl + F` | Open city search |
+| `Ctrl + H` | Go to home screen |
+| `Ctrl + B` | Open saved cities |
+| `F5` / `Ctrl + R` | Refresh weather data |
+| `Escape` | Close context menu / go back |
+
+Shortcuts also wired into the Electron app menu (File / View / Help) so they appear in native menu bars.
+
+---
+
 ## Animations
 
-| Surface                  | Implementation                                                         |
-| ------------------------ | ---------------------------------------------------------------------- |
-| Screen transitions       | `expo-router` Stack `slide_from_right`                                 |
-| Weather hero icon        | Reanimated condition-keyed loops (rotate, pulse, bounce, drift, sway)  |
-| Temperature display      | Reanimated spring counter via `AnimatedTextInput` + `useAnimatedProps` |
-| Hourly strip cards       | Moti stagger fade-up, `delay: index × 40 ms`                           |
-| Forecast rows            | Moti stagger slide-left, `delay: index × 55 ms`                        |
-| Saved city cards         | Moti stagger slide-right, `delay: index × 70 ms`                       |
-| Forecast expand/collapse | Reanimated `withTiming` height + opacity                               |
-| Min/max temp bar         | Reanimated `withTiming` width on mount                                 |
-| Offline banner           | Reanimated `withTiming` translateY slide                               |
+| Surface                  | Implementation                                                              |
+| ------------------------ | --------------------------------------------------------------------------- |
+| Screen transitions       | `expo-router` Stack `slide_from_right`                                      |
+| Weather hero icon        | Lottie JSON animations (cross-platform via `lottie-react-native`)           |
+| Saved city icon          | Lottie, condition-keyed, size 44                                            |
+| Temperature display      | Reanimated spring counter via `AnimatedTextInput` + `useAnimatedProps`      |
+| Hourly strip cards       | Moti stagger fade-up, `delay: index × 40 ms`                                |
+| Forecast rows            | Moti stagger slide-left, `delay: index × 55 ms`                             |
+| Saved city cards         | Moti stagger slide-right, `delay: index × 70 ms`                            |
+| Forecast expand/collapse | Reanimated `withTiming` height + opacity                                    |
+| Min/max temp bar         | Reanimated `withTiming` width on mount                                      |
+| Offline banner           | Reanimated `withTiming` translateY slide                                    |
+| Context menu             | Moti `opacity 0→1, scale 0.92→1`, 120 ms                                   |
 
 ---
 
@@ -90,11 +129,47 @@ A React Native (+Expo) weather app built for HNG 14 Mobile Track Stage 3. Fetche
    EXPO_PUBLIC_OWM_KEY=your_openweathermap_api_key
    ```
 
-3. Start the dev server:
-   ```bash
-   pnpm expo start
-   ```
-   Scan the QR code with **Expo Go** — no local prebuild required.
+### Mobile (Android / iOS)
+
+```bash
+pnpm android   # opens in Android emulator or device via Expo Go
+pnpm ios       # opens in iOS simulator
+```
+
+### Web (browser)
+
+```bash
+pnpm web
+# → http://localhost:8081
+```
+
+### Desktop (Electron — Linux)
+
+**Dev mode** (two terminals):
+
+```bash
+# Terminal 1 — start the Expo web server
+pnpm web
+
+# Terminal 2 — once the bundle is ready, launch Electron
+pnpm electron:start
+```
+
+Or use the combined one-liner (waits for the bundle automatically):
+
+```bash
+pnpm electron:dev
+```
+
+**Build Linux packages** (AppImage + deb + tar.gz → `release/`):
+
+```bash
+pnpm electron:build
+```
+
+> If you get a FUSE error on Ubuntu when running the AppImage: `sudo apt install libfuse2`
+
+**Download AppImage:** [Google Drive link](https://drive.google.com/your-link-here) _(replace with your Drive link)_
 
 ---
 
@@ -151,11 +226,25 @@ src/
 | `expo-location`                             | Device GPS + permission management                     |
 | `expo-linear-gradient`                      | Condition-keyed gradient backgrounds                   |
 | `expo-haptics`                              | Tactile feedback on key interactions                   |
+| `expo-clipboard`                            | Copy to clipboard on native                            |
+| `lottie-react-native`                       | Lottie animations on Android, iOS, and web             |
+| `@lottiefiles/dotlottie-react`              | Web renderer used internally by lottie-react-native    |
+| `react-native-web`                          | React Native components targeting the browser DOM      |
+| `electron`                                  | Desktop app shell (wraps the Expo web build)           |
+| `electron-builder`                          | Packages Electron app → AppImage, deb, tar.gz          |
 
 ---
 
 ## Screenshots
 
+### Mobile
+
 | Home | Forecast expanded | Search | Saved cities |
 | :---: | :---: | :---: | :---: |
 | <img src="https://github.com/user-attachments/assets/d3277fc3-a18f-4626-b1b8-0cad1213bfc5" width="250" alt="Home" /> | <img src="https://github.com/user-attachments/assets/2f0435b8-e28f-441b-bc9e-1f44e2131d76" width="250" alt="Forecast expanded" /> | <img src="https://github.com/user-attachments/assets/bd988193-0f0e-4894-be4d-66be7376f5ac" width="250" alt="Search" /> | <img src="https://github.com/user-attachments/assets/b43ec76f-d515-4710-9a86-efbf9a6767c1" width="250" alt="Saved cities" /> |
+
+### Web & Desktop
+
+| Web (browser) | Desktop (Electron) |
+| :---: | :---: |
+| _(add web screenshot)_ | _(add Electron screenshot)_ |
