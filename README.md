@@ -252,4 +252,5 @@ src/
 
 #### Desktop (Electron)
 
-_(add Electron screenshot)_ 
+<img width="1919" height="1054" alt="image" src="https://github.com/user-attachments/assets/ff6231ab-e248-4930-a34a-ff71fede2153" />
+
