@@ -88,13 +88,11 @@ app.on('window-all-closed', () => {
 ipcMain.on('context-menu', (event, items) => {
   const webContents = event.sender; // capture ref before async closure
   const win = BrowserWindow.fromWebContents(webContents);
-  console.log('[context-menu] received items:', items?.length, 'win:', win ? 'ok' : 'null');
   if (!win) return;
 
   const template = items.map((item, index) => ({
     label: item.label,
     click: () => {
-      console.log('[context-menu] clicked index:', index);
       webContents.send('context-menu-click', index);
     },
   }));
