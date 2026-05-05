@@ -8,6 +8,7 @@ import {
   useRemoveCity,
   makeCityId,
 } from "@/src/hooks/useSavedCities";
+import { useBreakpoint } from "@/src/hooks/useBreakpoint";
 import SavedCityRow from "@/src/components/SavedCityRow";
 import SkeletonBlock from "@/src/components/SkeletonBlock";
 
@@ -15,14 +16,19 @@ export default function CitiesScreen() {
   const insets = useSafeAreaInsets();
   const { data: cities, isLoading } = useSavedCities();
   const removeCity = useRemoveCity();
+  const { showSidebar, isDesktop } = useBreakpoint();
 
   return (
     <View style={[tw`flex-1 bg-slate-950`, { paddingTop: insets.top + 12 }]}>
       {/* Header */}
       <View style={tw`flex-row items-center justify-between px-5 mb-6`}>
-        <Pressable onPress={() => router.back()} hitSlop={12}>
-          <Ionicons name="arrow-back" size={22} color="#fff" />
-        </Pressable>
+        {showSidebar ? (
+          <View style={{ width: 22 }} />
+        ) : (
+          <Pressable onPress={() => router.back()} hitSlop={12}>
+            <Ionicons name="arrow-back" size={22} color="#fff" />
+          </Pressable>
+        )}
         <Text style={tw`text-white text-base font-semibold`}>Saved Cities</Text>
         <Pressable onPress={() => router.push("/search")} hitSlop={12}>
           <Ionicons name="add" size={26} color="#60A5FA" />
@@ -57,11 +63,15 @@ export default function CitiesScreen() {
 
       {/* List */}
       <FlatList
+        key={isDesktop ? '2col' : '1col'}
         data={cities ?? []}
         keyExtractor={(item) => item.id}
+        numColumns={isDesktop ? 2 : 1}
+        columnWrapperStyle={isDesktop ? { gap: 12 } : undefined}
         contentContainerStyle={{
           paddingHorizontal: 16,
           paddingBottom: insets.bottom + 24,
+          gap: isDesktop ? 0 : undefined,
         }}
         renderItem={({ item, index }) => (
           <SavedCityRow

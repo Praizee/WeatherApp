@@ -7,6 +7,7 @@ import tw from "@/src/lib/tw";
 import { useDeviceLocation } from "@/src/hooks/useDeviceLocation";
 import { useWeather } from "@/src/hooks/useWeather";
 import { useReverseGeo } from "@/src/hooks/useReverseGeo";
+import { useBreakpoint } from "@/src/hooks/useBreakpoint";
 import { HomeSkeleton } from "@/src/components/SkeletonBlock";
 import ErrorState from "@/src/components/ErrorState";
 import HourlyStrip from "@/src/components/HourlyStrip";
@@ -27,6 +28,7 @@ import { isElectron } from "@/src/platform/electron";
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
+  const { showSidebar, isDesktop } = useBreakpoint();
   const location = useDeviceLocation();
 
   const lat = location.status === "ready" ? location.lat : null;
@@ -150,73 +152,113 @@ export default function HomeScreen() {
         }
       >
         {/* ── Header bar ── */}
-        <View style={tw`flex-row items-center justify-between px-6 mb-6`}>
-          <Pressable onPress={() => router.push("/cities")} hitSlop={12}>
-            <Ionicons name="bookmark-outline" size={22} color="#ffffff" />
-          </Pressable>
-          <Text style={tw`text-white text-sm font-medium tracking-wide`}>
+        {!showSidebar && (
+          <View style={tw`flex-row items-center justify-between px-6 mb-6`}>
+            <Pressable onPress={() => router.push("/cities")} hitSlop={12}>
+              <Ionicons name="bookmark-outline" size={22} color="#ffffff" />
+            </Pressable>
+            <Text style={tw`text-white text-sm font-medium tracking-wide`}>
+              {cityName ?? "My Location"}
+            </Text>
+            <Pressable onPress={() => router.push("/search")} hitSlop={12}>
+              <Ionicons name="search-outline" size={22} color="#ffffff" />
+            </Pressable>
+          </View>
+        )}
+
+        {showSidebar && (
+          <Text style={tw`text-white text-sm font-medium tracking-wide text-center mb-6`}>
             {cityName ?? "My Location"}
           </Text>
-          <Pressable onPress={() => router.push("/search")} hitSlop={12}>
-            <Ionicons name="search-outline" size={22} color="#ffffff" />
-          </Pressable>
-        </View>
+        )}
 
-        {/* ── Hero ── */}
-        <View style={tw`items-center px-6 mb-8`} {...(Platform.OS === 'web' ? { onContextMenu: openHeroMenu } as any : {})}>
-          <LottieWeatherIcon weatherKey={getWeatherKey(condition.icon)} size={72} />
-          <AnimatedTemp temp={current.temp} fontSize={96} />
-          <Text style={tw`text-white text-2xl font-light capitalize mb-1`}>
-            {condition.description}
-          </Text>
-          <Text style={tw`text-slate-300 text-sm`}>
-            Feels like {formatTemp(current.feels_like)}
-          </Text>
-        </View>
+        {isDesktop ? (
+          /* ── Desktop two-column layout ── */
+          <View style={tw`flex-row px-6 gap-6`}>
+            {/* Left: hero + pills */}
+            <View
+              style={{ flex: 0.45 }}
+              {...(Platform.OS === 'web' ? { onContextMenu: openHeroMenu } as any : {})}
+            >
+              <View style={tw`items-center mb-8`}>
+                <LottieWeatherIcon weatherKey={getWeatherKey(condition.icon)} size={80} />
+                <AnimatedTemp temp={current.temp} fontSize={96} />
+                <Text style={tw`text-white text-2xl font-light capitalize mb-1`}>
+                  {condition.description}
+                </Text>
+                <Text style={tw`text-slate-300 text-sm`}>
+                  Feels like {formatTemp(current.feels_like)}
+                </Text>
+              </View>
+              <View style={tw`flex-row gap-3 mb-3`}>
+                <DetailPill icon="water-outline" label="Humidity" value={`${current.humidity}%`} />
+                <DetailPill
+                  icon="navigate-outline"
+                  label="Wind"
+                  value={`${Math.round(current.wind_speed)} m/s ${getWindDirection(current.wind_deg)}`}
+                />
+                <DetailPill
+                  icon="eye-outline"
+                  label="Visibility"
+                  value={`${Math.round((current.visibility ?? 0) / 1000)} km`}
+                />
+              </View>
+              <View style={tw`flex-row gap-3`}>
+                <DetailPill icon="sunny-outline" label="UV Index" value={String(Math.round(current.uvi))} />
+                <DetailPill icon="speedometer-outline" label="Pressure" value={`${current.pressure} hPa`} />
+                <DetailPill icon="thermometer-outline" label="Dew Point" value={formatTemp(current.dew_point)} />
+              </View>
+            </View>
 
-        {/* ── Detail pills row 1 ── */}
-        <View style={tw`flex-row mx-6 gap-3 mb-3`}>
-          <DetailPill
-            icon="water-outline"
-            label="Humidity"
-            value={`${current.humidity}%`}
-          />
-          <DetailPill
-            icon="navigate-outline"
-            label="Wind"
-            value={`${Math.round(current.wind_speed)} m/s ${getWindDirection(current.wind_deg)}`}
-          />
-          <DetailPill
-            icon="eye-outline"
-            label="Visibility"
-            value={`${Math.round((current.visibility ?? 0) / 1000)} km`}
-          />
-        </View>
+            {/* Right: hourly + forecast */}
+            <View style={{ flex: 0.55 }}>
+              <HourlyStrip hours={hourly} timezoneOffset={timezone_offset} />
+              <ForecastList daily={daily} timezoneOffset={timezone_offset} />
+            </View>
+          </View>
+        ) : (
+          <>
+            {/* ── Hero ── */}
+            <View style={tw`items-center px-6 mb-8`} {...(Platform.OS === 'web' ? { onContextMenu: openHeroMenu } as any : {})}>
+              <LottieWeatherIcon weatherKey={getWeatherKey(condition.icon)} size={72} />
+              <AnimatedTemp temp={current.temp} fontSize={96} />
+              <Text style={tw`text-white text-2xl font-light capitalize mb-1`}>
+                {condition.description}
+              </Text>
+              <Text style={tw`text-slate-300 text-sm`}>
+                Feels like {formatTemp(current.feels_like)}
+              </Text>
+            </View>
 
-        {/* ── Detail pills row 2 ── */}
-        <View style={tw`flex-row mx-6 gap-3 mb-8`}>
-          <DetailPill
-            icon="sunny-outline"
-            label="UV Index"
-            value={String(Math.round(current.uvi))}
-          />
-          <DetailPill
-            icon="speedometer-outline"
-            label="Pressure"
-            value={`${current.pressure} hPa`}
-          />
-          <DetailPill
-            icon="thermometer-outline"
-            label="Dew Point"
-            value={formatTemp(current.dew_point)}
-          />
-        </View>
+            {/* ── Detail pills row 1 ── */}
+            <View style={tw`flex-row mx-6 gap-3 mb-3`}>
+              <DetailPill icon="water-outline" label="Humidity" value={`${current.humidity}%`} />
+              <DetailPill
+                icon="navigate-outline"
+                label="Wind"
+                value={`${Math.round(current.wind_speed)} m/s ${getWindDirection(current.wind_deg)}`}
+              />
+              <DetailPill
+                icon="eye-outline"
+                label="Visibility"
+                value={`${Math.round((current.visibility ?? 0) / 1000)} km`}
+              />
+            </View>
 
-        {/* ── Hourly strip ── */}
-        <HourlyStrip hours={hourly} timezoneOffset={timezone_offset} />
+            {/* ── Detail pills row 2 ── */}
+            <View style={tw`flex-row mx-6 gap-3 mb-8`}>
+              <DetailPill icon="sunny-outline" label="UV Index" value={String(Math.round(current.uvi))} />
+              <DetailPill icon="speedometer-outline" label="Pressure" value={`${current.pressure} hPa`} />
+              <DetailPill icon="thermometer-outline" label="Dew Point" value={formatTemp(current.dew_point)} />
+            </View>
 
-        {/* ── 8-day forecast ── */}
-        <ForecastList daily={daily} timezoneOffset={timezone_offset} />
+            {/* ── Hourly strip ── */}
+            <HourlyStrip hours={hourly} timezoneOffset={timezone_offset} />
+
+            {/* ── 8-day forecast ── */}
+            <ForecastList daily={daily} timezoneOffset={timezone_offset} />
+          </>
+        )}
       </ScrollView>
     </LinearGradient>
   );

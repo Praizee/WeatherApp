@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import HoverPressable from "@/src/components/HoverPressable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useBreakpoint } from "@/src/hooks/useBreakpoint";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
@@ -25,6 +26,7 @@ import type { GeoResult } from "@/src/types/owm";
 
 export default function SearchScreen() {
   const insets = useSafeAreaInsets();
+  const { showSidebar } = useBreakpoint();
   const [input, setInput] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -96,9 +98,11 @@ export default function SearchScreen() {
       <View style={{ paddingTop: insets.top + 12, flex: 1 }}>
         {/* Header */}
         <View style={tw`flex-row items-center px-4 mb-4 gap-3`}>
-          <HoverPressable onPress={() => router.back()} accessibilityLabel="Go back">
-            <Ionicons name="arrow-back" size={22} color="#fff" />
-          </HoverPressable>
+          {!showSidebar && (
+            <HoverPressable onPress={() => router.back()} accessibilityLabel="Go back">
+              <Ionicons name="arrow-back" size={22} color="#fff" />
+            </HoverPressable>
+          )}
           <View
             style={[
               tw`flex-1 flex-row items-center rounded-2xl px-4 gap-2`,
